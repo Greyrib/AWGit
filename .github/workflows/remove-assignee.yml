@@ -15,7 +15,6 @@ jobs:
       - name: Check if issue was moved to Done
         id: check_done
         run: |
-          # Debugging to check the column name
           echo "Column name: ${{ github.event.project_card.column_name }}"
           
           # Check if the project card was moved to the "Done" column (adjust based on your column name)
@@ -28,6 +27,14 @@ jobs:
       - name: Debug Content URL
         run: echo "Content URL: ${{ github.event.project_card.content_url }}"
 
+      - name: Extract Issue Number
+        id: extract_issue
+        run: |
+          # Extract issue number from the content_url
+          issue_number=$(echo "${{ github.event.project_card.content_url }}" | grep -oE '[0-9]+$')
+          echo "Issue Number: $issue_number"
+          echo "::set-output name=issue_number::$issue_number"
+
       - name: Remove Assignee
         if: steps.check_done.outputs.moved_to_done == 'true'
         uses: octokit/request-action@v2.x
@@ -35,5 +42,5 @@ jobs:
           route: DELETE /repos/:owner/:repo/issues/:issue_number/assignees
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
-          issue_number: ${{ github.event.project_card.content_url | split: '/' | last }}
-          assignees: ${{ github.actor }} # Replace with whoever you want to remove as the assignee
+          issue_number: ${{ steps.extract_issue.outputs.issue_number }}
+          assignees: ${{ github.actor }} # Or replace with the specific assignee to be removed
