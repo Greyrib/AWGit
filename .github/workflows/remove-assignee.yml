@@ -33,7 +33,8 @@ jobs:
           # Extract issue number from the content_url
           issue_number=$(echo "${{ github.event.project_card.content_url }}" | grep -oE '[0-9]+$')
           echo "Issue Number: $issue_number"
-          echo "::set-output name=issue_number::$issue_number"
+          # Set the output in a way compatible with GitHub Actions
+          echo "issue_number=$issue_number" >> $GITHUB_ENV
 
       - name: Remove Assignee
         if: steps.check_done.outputs.moved_to_done == 'true'
@@ -42,5 +43,5 @@ jobs:
           route: DELETE /repos/:owner/:repo/issues/:issue_number/assignees
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
-          issue_number: ${{ steps.extract_issue.outputs.issue_number }}
+          issue_number: ${{ env.issue_number }}
           assignees: ${{ github.actor }} # Or replace with the specific assignee to be removed
