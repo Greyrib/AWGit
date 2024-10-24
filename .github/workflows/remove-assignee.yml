@@ -19,9 +19,9 @@ jobs:
           
           # Check if the project card was moved to the "Done" column (adjust based on your column name)
           if [[ "${{ github.event.project_card.column_name }}" == "Done" ]]; then
-            echo "::set-output name=moved_to_done::true"
+            echo "moved_to_done=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=moved_to_done::false"
+            echo "moved_to_done=false" >> $GITHUB_ENV
           fi
 
       - name: Debug Content URL
@@ -33,11 +33,10 @@ jobs:
           # Extract issue number from the content_url
           issue_number=$(echo "${{ github.event.project_card.content_url }}" | grep -oE '[0-9]+$')
           echo "Issue Number: $issue_number"
-          # Set the output in a way compatible with GitHub Actions
           echo "issue_number=$issue_number" >> $GITHUB_ENV
 
       - name: Remove Assignee
-        if: steps.check_done.outputs.moved_to_done == 'true'
+        if: env.moved_to_done == 'true'
         uses: octokit/request-action@v2.x
         with:
           route: DELETE /repos/:owner/:repo/issues/:issue_number/assignees
