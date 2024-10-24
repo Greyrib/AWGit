@@ -2,9 +2,11 @@ name: Remove Assignee on Done
 
 on:
   workflow_dispatch:
-  # Trigger on changes in project card events
   project_card:
     types: [moved]
+
+permissions:
+  issues: write
 
 jobs:
   clear_assignee:
@@ -13,12 +15,18 @@ jobs:
       - name: Check if issue was moved to Done
         id: check_done
         run: |
+          # Debugging to check the column name
+          echo "Column name: ${{ github.event.project_card.column_name }}"
+          
           # Check if the project card was moved to the "Done" column (adjust based on your column name)
           if [[ "${{ github.event.project_card.column_name }}" == "Done" ]]; then
             echo "::set-output name=moved_to_done::true"
           else
             echo "::set-output name=moved_to_done::false"
           fi
+
+      - name: Debug Content URL
+        run: echo "Content URL: ${{ github.event.project_card.content_url }}"
 
       - name: Remove Assignee
         if: steps.check_done.outputs.moved_to_done == 'true'
