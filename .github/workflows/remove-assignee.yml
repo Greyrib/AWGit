@@ -36,11 +36,11 @@ jobs:
           echo "issue_number=$issue_number" >> $GITHUB_ENV
 
       - name: Remove Assignee
-        if: env.moved_to_done == 'true'  # Remove `${{ }}`
+        if: ${{ env.moved_to_done == 'true' }}  # Proper if syntax with `${{ }}`
         uses: octokit/request-action@v2.x
         with:
           route: DELETE /repos/:owner/:repo/issues/:issue_number/assignees
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
           issue_number: ${{ env.issue_number }}
-          assignees: ${{ github.actor }} # Or replace with the specific assignee to be removed
+          assignees: ${{ github.actor }}  # Or replace with the specific assignee to be removed
