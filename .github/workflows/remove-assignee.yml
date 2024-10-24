@@ -1,0 +1,31 @@
+name: Remove Assignee on Done
+
+on:
+  workflow_dispatch:
+  # Trigger on changes in project card events
+  project_card:
+    types: [moved]
+
+jobs:
+  clear_assignee:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if issue was moved to Done
+        id: check_done
+        run: |
+          # Check if the project card was moved to the "Done" column (adjust based on your column name)
+          if [[ "${{ github.event.project_card.column_name }}" == "Done" ]]; then
+            echo "::set-output name=moved_to_done::true"
+          else
+            echo "::set-output name=moved_to_done::false"
+          fi
+
+      - name: Remove Assignee
+        if: steps.check_done.outputs.moved_to_done == 'true'
+        uses: octokit/request-action@v2.x
+        with:
+          route: DELETE /repos/:owner/:repo/issues/:issue_number/assignees
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          issue_number: ${{ github.event.project_card.content_url | split: '/' | last }}
+          assignees: ${{ github.actor }} # Replace with whoever you want to remove as the assignee
