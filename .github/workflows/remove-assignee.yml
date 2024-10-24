@@ -36,7 +36,7 @@ jobs:
           echo "issue_number=$issue_number" >> $GITHUB_ENV
 
       - name: Remove Assignee
-        if: env.moved_to_done == 'true'
+        if: ${{ env.moved_to_done == 'true' }} # Correct syntax for GitHub Actions 'if' condition
         uses: octokit/request-action@v2.x
         with:
           route: DELETE /repos/:owner/:repo/issues/:issue_number/assignees
