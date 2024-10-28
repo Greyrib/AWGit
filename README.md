@@ -14,6 +14,7 @@ Please note the associated projects are private at the time of this writing.
 - Dynamic HUD (fading & criteria-based visibility adjustments)
 
 _Features being worked on, or intended in the future:_
+- OpFlash alpha-numeric multi-tier LHS menu
 - AI Director (per faction)
 - Diplomacy tracking
 - Difficulty manager ('FCS')
