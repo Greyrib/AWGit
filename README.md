@@ -18,3 +18,6 @@ _Features being worked on, or intended in the future:_
 - AI Director (per faction)
 - Diplomacy tracking
 - Difficulty manager ('FCS')
+
+Previous features not included anymore:
+- Hotbar with listing of weapons & modules, capable of controlling functionality for these on per-slot basis
